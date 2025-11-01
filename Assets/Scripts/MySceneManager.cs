@@ -13,13 +13,10 @@ public class MySceneManager : MonoBehaviour
     private void Start()
     {
         gameInput.OnInteractAction += GameInput_OnInteractAction;
-        SceneManager.UnloadSceneAsync(1);
-        SceneManager.LoadSceneAsync(0);  
     }
 
     private void GameInput_OnInteractAction(object sender, System.EventArgs e)
     {
-        SceneManager.UnloadSceneAsync(0);
-        SceneManager.LoadSceneAsync(1);
+        SceneManager.LoadScene(1);
     }
 }

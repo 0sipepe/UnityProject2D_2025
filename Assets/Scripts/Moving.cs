@@ -1,102 +1,132 @@
+using System;
+using System.Runtime.InteropServices.WindowsRuntime;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class Moving : MonoBehaviour
 {
     [SerializeField]
+    // Он у тебя уже давно Singleton.
     private InputManager gameInput;
+
     [SerializeField]
     private float moveSpeed;
     [SerializeField]
     private float jumpHeight;
+
     [SerializeField]
+    // Не понятное название. Это лимит по расстоянию, или по времени?
     private float limitToStartNewJump;
 
-
-    private bool isWalking;
-    private bool isJumpButtonPushed = false;
     private bool isJumpingUp = false;
     private bool isJumpingDown = false;
     private bool hasReachedTheChange = false;
-    
+    private float startPos;
+    private bool isJumpReserved = false;
 
-    //Надо поменять логику того, что здесь все зависит от абсолютной позиции игрока. Либо сделать емпти 
+    private CapsuleCollider2D _collider;
+    private Rigidbody2D _rigidbody;
+
+
     private void Start()
     {
+        _collider = GetComponent<CapsuleCollider2D>();
+        _rigidbody = GetComponent<Rigidbody2D>();
         gameInput.OnJumpAction += GameInput_OnJumpAction;
-        
+
+        _updateJumpingState = NotJumping;
     }
 
     private void GameInput_OnJumpAction(object sender, System.EventArgs e)
     {
-        bool hasReachedLimitToStartNewJump = transform.position.y <= limitToStartNewJump;
-        if (!(isJumpingUp || isJumpingDown) || (isJumpingDown && hasReachedLimitToStartNewJump))
+        //Debug.Log("distance before ground = " + IsNearGroundRaycast());
+        if (!isJumpReserved && DistanceBeforeGroundRaycast() <= 0.4)
         {
-            isJumpButtonPushed = true;
-            hasReachedTheChange = false;
+            isJumpReserved = true;
+            
+           //Debug.Log("button pushed && reserved a jump");
         }
+    }
+
+    private Func<Action> _updateJumpingState;  
+    private void Update()
+    {
+        Vector2 input = gameInput.GetMovementVectorNormalized();
+
+        _updateJumpingState = () => _updateJumpingState();
+
+        _rigidbody.linearVelocityX = input.x * moveSpeed;
     }
 
    
-    private void Update()
+    
+    // Плохое назнавние: судя по нему, метод должен возвращать bool
+    private float DistanceBeforeGroundRaycast()
     {
-       
-        Vector2 input = gameInput.GetMovementVectorNormalized();
-        Vector3 moveDir;
+        float distanceBeforeGround;
+        Vector3 player = transform.position;
+        player.y = transform.position.y - _collider.size.y / 2f;
 
-        
-        if (isJumpButtonPushed)
+        Vector3 down = new Vector3(0, -3, 0);
+        Ray rayToFloor = new Ray(player, down);
+
+        Debug.DrawRay(player, down, Color.blue);
+
+        RaycastHit2D hit = Physics2D.Raycast(player, down);
+        if (hit.collider != null && hit.collider.gameObject.layer == LayerMask.NameToLayer("Floor")) 
         {
-            isJumpingUp = true;
-            moveDir = new Vector3(input.x, jumpHeight, 0f);
-            isJumpButtonPushed = false;
-
+            distanceBeforeGround = hit.distance;            
         }
-
-        //when palyerHuman is going up
-        else if (isJumpingUp)
-        {
-            float distanceBeforeChangingDirectionOfJump = jumpHeight - transform.position.y;
-            hasReachedTheChange = distanceBeforeChangingDirectionOfJump <= 0.4;
-            moveDir = new Vector3(input.x, distanceBeforeChangingDirectionOfJump, 0f);
-
-            if (hasReachedTheChange)
-            {
-                isJumpingUp = false;
-                isJumpingDown = true;
-                moveDir = new Vector3(input.x, jumpHeight, 0f);
-            }
-            
-        }
-
-        //when palyerHuman is going down
-        else if (isJumpingDown)
-        {
-            hasReachedTheChange = transform.position.y <= 0.5; 
-            float distanceBeforeChangingDirectionOfJump = -(jumpHeight - (jumpHeight - transform.position.y));
-            moveDir = new Vector3(input.x, distanceBeforeChangingDirectionOfJump, 0f);
-
-            if (hasReachedTheChange)
-            {
-                moveDir = new Vector3(input.x, 0, 0f);
-                isJumpingDown = false;
-            }
-        }
-
-        //without jumping
         else
         {
-            moveDir = new Vector3(input.x, 0f, 0f);
+            distanceBeforeGround = 5;
         }
-        
-        
-        transform.position += moveDir * moveSpeed * Time.deltaTime;
-
-        isWalking = moveDir != Vector3.zero;
-
-    }
-    public bool IsWalking()
-    {
-        return isWalking;
+        return distanceBeforeGround;
     }
     
+
+
+    private Action NotJumping()
+    {
+        if (!(isJumpReserved && !isJumpingDown))
+        {
+            return NotJumping();
+        }
+        
+        isJumpingUp = true;
+        _rigidbody.AddForceY(jumpHeight);
+        isJumpReserved = false;
+
+        return JumpingUp();
+    }
+
+    private Action JumpingUp()
+    {
+        if (!hasReachedTheChange)
+        {
+            float distancePassed = transform.position.y - startPos;
+            float distanceBeforeChangingDirectionOfJump = jumpHeight - distancePassed;
+
+            hasReachedTheChange = distanceBeforeChangingDirectionOfJump <= limitToStartNewJump;
+            return JumpingUp();
+        }
+
+        //Debug.Log("Has reached the Change");
+        isJumpingUp = false;
+        isJumpingDown = true;
+        return JumpingDown();
+    }
+
+    private Action JumpingDown()
+    {
+        // Debug.Log("distance before ground jumping down = " + IsNearGroundRaycast());
+        if (DistanceBeforeGroundRaycast() > 0.001f)
+        {
+            return JumpingDown();
+        }
+
+        isJumpingDown = false;
+        return NotJumping();
+    }
+
 }
