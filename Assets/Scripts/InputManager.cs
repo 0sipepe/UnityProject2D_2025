@@ -7,15 +7,15 @@ public class InputManager : MonoBehaviour
     public event EventHandler OnInteractAction;
     public event EventHandler OnJumpAction;
 
-    public static InputManager Instance;
+    public static InputManager gameInput;
 
     private void Awake()
     {
-        if (Instance != null)
+        if (gameInput != null)
         {
             Debug.LogError("There are more than one input managers");
         }
-         Instance = this;
+        gameInput = this;
         playerInputActions = new PlayerInputActions();
         playerInputActions.Enable();
 

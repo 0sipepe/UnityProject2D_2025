@@ -583,7 +583,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gameInput: {fileID: 628847816}
   moveSpeed: 7
-  jumpHeight: 10
+  jumpHeight: 45
   reserveDistance: 3
 --- !u!4 &980392828
 Transform:
