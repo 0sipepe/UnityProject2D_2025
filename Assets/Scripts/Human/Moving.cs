@@ -10,6 +10,8 @@ public class Moving : MonoBehaviour
     [SerializeField]
     private float moveSpeed;
     [SerializeField]
+    private LayerMask layerMask;
+    [SerializeField]
     private float jumpHeight;
 
     [SerializeField]
@@ -76,7 +78,7 @@ public class Moving : MonoBehaviour
 
 
 
-
+    //хорошо было бы вынести в отдельный скрипт по типу IsNearGround(startPosition, distanceToCheck) 
     //возвращает, можно ли зарезервировать прижок
     private bool IsAvailableToReserveAJump()
     {
@@ -88,7 +90,7 @@ public class Moving : MonoBehaviour
 
         Debug.DrawRay(player, Vector2.down * reserveDistance , Color.red);
 
-        RaycastHit2D hit = Physics2D.Raycast(player, Vector2.down * reserveDistance, LayerMask.NameToLayer("Floor"));
+        RaycastHit2D hit = Physics2D.Raycast(player, Vector2.down * reserveDistance, layerMask);
         
 
         if (hit.collider != null)

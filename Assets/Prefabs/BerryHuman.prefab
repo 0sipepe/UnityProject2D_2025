@@ -10,9 +10,11 @@ GameObject:
   m_Component:
   - component: {fileID: 3123202973064270210}
   - component: {fileID: 4574255610217524419}
-  - component: {fileID: 2577147964498274049}
+  - component: {fileID: 4411769400844048625}
+  - component: {fileID: 1561112058753611592}
+  - component: {fileID: 4023428861182162055}
   m_Layer: 0
-  m_Name: Berry
+  m_Name: BerryHuman
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -27,7 +29,7 @@ Transform:
   m_GameObject: {fileID: 3685451756628944431}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.9004452, y: 5.891544, z: -0.027199432}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -46,8 +48,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: db8d63d4b6acd11458aedd2f23f3a4c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!61 &2577147964498274049
-BoxCollider2D:
+  gravity: {fileID: 4023428861182162055}
+--- !u!114 &4411769400844048625
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3685451756628944431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eafb415a7b76b346b85261f7f92f08c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactableObjectSO: {fileID: 11400000, guid: 4c24cfa2b0af6f442a2f6aacebbf78da, type: 2}
+--- !u!58 &1561112058753611592
+CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -81,17 +97,22 @@ BoxCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Size: {x: 1, y: 1}
-  m_EdgeRadius: 0
+  m_Radius: 0.5
+--- !u!114 &4023428861182162055
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3685451756628944431}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6dc4f602e7822e44b01d60e180ed324, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  layerMask:
+    serializedVersion: 2
+    m_Bits: 64
 --- !u!1 &7141292418947686796
 GameObject:
   m_ObjectHideFlags: 0
@@ -118,7 +139,7 @@ Transform:
   m_GameObject: {fileID: 7141292418947686796}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0.027199432}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

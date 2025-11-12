@@ -8,11 +8,14 @@ public class Interaction : MonoBehaviour
     private InputManager gameInput;
 
     private bool isHolding = false;
-    public event EventHandler OnChangingInventory;
+    public event EventHandler OnGettingInventory;
+    public event EventHandler OnThrowingInventory;
+
 
     //private GameObject interactableObject;
     internal IHoldable interactableObject;
     private IHoldable interactableObjectNearPlayer;
+    
 
 
     void Start()
@@ -28,19 +31,30 @@ public class Interaction : MonoBehaviour
         // вместо логического И сделать вложенный if
         if (isHolding && (interactableObjectNearPlayer == null))
         {
+            Debug.Log("throw");
             isHolding = false;
+            OnThrowingInventory?.Invoke(this, EventArgs.Empty);
+            interactableObject.SetIsHolded(false);
+            interactableObject = null;
+
         }
         else if (isHolding && (interactableObjectNearPlayer != null))
         {
             interactableObject = interactableObjectNearPlayer;
+            //ягода знает что ее держат
+            interactableObject.SetIsHolded(true);
+            OnGettingInventory?.Invoke(this, EventArgs.Empty);
+
         }
         else if (!isHolding && (interactableObjectNearPlayer != null))
         {
             Debug.Log("get");
             interactableObject = interactableObjectNearPlayer;
             isHolding = true;
+            interactableObject.SetIsHolded(true);
+            OnGettingInventory?.Invoke(this, EventArgs.Empty);
         }
-        OnChangingInventory?.Invoke(this, EventArgs.Empty);
+        
     }
 
 
@@ -49,14 +63,15 @@ public class Interaction : MonoBehaviour
     {
         if (collision.gameObject.layer == LayerMask.NameToLayer("Interactable Objects"))
         {
-            Debug.Log(collision);
-            Debug.Log(collision.transform.GetComponent<IHoldable>());
+            
+            Debug.Log("trigger enter");
             interactableObjectNearPlayer = collision.transform.GetComponent<IHoldable>();
 
         }
     }
     private void OnTriggerExit2D(Collider2D collision)
     {
+        Debug.Log("trigger exit");
         interactableObjectNearPlayer = null;
     }
    
