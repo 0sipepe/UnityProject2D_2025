@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class MovingFish : MonoBehaviour
 {
-    [SerializeField]
+   
     private InputManager gameInput;
     [SerializeField]
     private float moveSpeed;
@@ -12,7 +12,9 @@ public class MovingFish : MonoBehaviour
 
     private void Start()
     {
+        gameInput = InputManager.Instance;
         gameInput.OnJumpAction += GameInput_OnJumpAction;
+        
     }
 
     private void GameInput_OnJumpAction(object sender, System.EventArgs e)

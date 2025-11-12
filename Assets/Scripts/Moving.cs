@@ -5,10 +5,7 @@ using UnityEngine.Rendering;
 
 public class Moving : MonoBehaviour
 {
-
-    [SerializeField]
     private InputManager gameInput;
-    //private InputManager gameInput = InputManager.gameInput;
 
     [SerializeField]
     private float moveSpeed;
@@ -16,8 +13,6 @@ public class Moving : MonoBehaviour
     private float jumpHeight;
 
     [SerializeField]
-
-    
     private float reserveDistance = 3;
 
    
@@ -31,9 +26,11 @@ public class Moving : MonoBehaviour
 
     private void Start()
     {
-        _collider = GetComponent<CapsuleCollider2D>();
-        _rigidbody = GetComponent<Rigidbody2D>();
+        gameInput = InputManager.Instance;
         gameInput.OnJumpAction += GameInput_OnJumpAction;
+
+        _collider = transform.GetComponent<CapsuleCollider2D>();
+        _rigidbody = transform.GetComponent<Rigidbody2D>();
 
         //_updateJumpingState = NotJumping;
 
@@ -47,8 +44,12 @@ public class Moving : MonoBehaviour
         if (!isJumpReserved && (IsAvailableToReserveAJump()))
         {
             isJumpReserved = true;
-
             Debug.Log("reserved");
+           
+        }
+        if (isGrounded)
+        {
+            Jump();
         }
     }
 
@@ -56,30 +57,19 @@ public class Moving : MonoBehaviour
     private void Update()
     {
 
-        isJumpingDown = _rigidbody.linearVelocityY <= 0;
+        isJumpingDown = _rigidbody.linearVelocityY <=  0;
 
         Vector2 input = gameInput.GetMovementVectorNormalized();
-        //if (isJumpReserved && isGrounded)
-        //{
-        //    isJumpingUp = true;
-        //    isJumpingDown = false;
-        //    _rigidbody.AddForceY(jumpHeight, ForceMode2D.Impulse);
-        //    isJumpReserved = false;
-        //}
-       
-
-
-        //_updateJumpingState = () => _updateJumpingState();
-
+      
         _rigidbody.linearVelocityX = input.x * moveSpeed;
     }
 
     private void Jump()
     {
 
-        isJumpingDown = false;
         _rigidbody.AddForceY(jumpHeight, ForceMode2D.Impulse);
         isJumpReserved = false;
+        isGrounded = false;
 
     }
 
@@ -94,12 +84,16 @@ public class Moving : MonoBehaviour
         Vector3 player = transform.position;
         player.y = transform.position.y - _collider.size.y / 2f;
 
-        Debug.DrawRay(player, Vector2.down * reserveDistance, Color.blue);
+        
 
-        RaycastHit2D hit = Physics2D.Raycast(player, Vector2.down, reserveDistance, LayerMask.NameToLayer("Floor"));
+        Debug.DrawRay(player, Vector2.down * reserveDistance , Color.red);
+
+        RaycastHit2D hit = Physics2D.Raycast(player, Vector2.down * reserveDistance, LayerMask.NameToLayer("Floor"));
+        
+
         if (hit.collider != null)
         {
-            if ((hit.distance <= reserveDistance) && isJumpingDown)
+            if (isJumpingDown)
             {
                 isAvailable = true;
                 Debug.Log("is available");
@@ -110,7 +104,7 @@ public class Moving : MonoBehaviour
             isAvailable = false;
             Debug.Log("is not available");
         }
-        Debug.Log("inside method" + isAvailable);
+        
         return isAvailable;
     }
 
@@ -143,7 +137,7 @@ public class Moving : MonoBehaviour
         if (collision.gameObject.layer == LayerMask.NameToLayer("Floor"))
         {
             Debug.Log("grounded");
-            //isGrounded = true;
+            isGrounded = true;
             if (isJumpReserved)
             {
                 Jump();
