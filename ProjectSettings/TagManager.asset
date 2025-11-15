@@ -3,7 +3,9 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 3
-  tags: []
+  tags:
+  - Bubble
+  - winner
   layers:
   - Default
   - TransparentFX
@@ -13,8 +15,8 @@ TagManager:
   - UI
   - Floor
   - Interactable Objects
-  - 
-  - 
+  - Enemy
+  - Map
   - 
   - 
   - 
@@ -40,6 +42,12 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: New Layer 1
+    uniqueID: 272782987
+    locked: 0
+  - name: New Layer 2
+    uniqueID: 1323612035
     locked: 0
   m_RenderingLayers:
   - Default

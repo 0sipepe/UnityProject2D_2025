@@ -6,11 +6,17 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
+    path: Assets/Scenes/Lobby.unity
+    guid: fef8fec952e7caa4fa42d786869387f8
+  - enabled: 1
     path: Assets/Scenes/BeforeFishGameplay.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
     path: Assets/Scenes/FishGameplay.unity
     guid: a13e2e5ff06a69648a89dbca5173753b
+  - enabled: 1
+    path: Assets/Scenes/GameOver.unity
+    guid: 820f0352c56d48d4d88e7e8ad9be90de
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}
   m_UseUCBPForAssetBundles: 0
